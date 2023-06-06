@@ -85,8 +85,9 @@ namespace Clean.Site.Services
 
             if (model.Avatar != null)
             {
-                var avatarUdi = _mediaUploadService.CreateMediaItemFromFileUpload(model.Avatar, 1126, "Image");
+                var avatarUdi = _mediaUploadService.CreateMediaItemFromFileUpload(model.Avatar, 1162, "image");
                 member.SetValue("avatar", avatarUdi);
+    
             }
 
             List<string> galleryUdis = new List<string>();
@@ -132,7 +133,7 @@ namespace Clean.Site.Services
 
                 foreach (var item in model.Gallery.Where(x => x != null))
                 {
-                    var mediaKey = _mediaUploadService.CreateMediaItemFromFileUpload(item, 1126, "Image", returnUdi: false);
+                    var mediaKey = _mediaUploadService.CreateMediaItemFromFileUpload(item, 1162, "Image", returnUdi: false);
 
                     if(!string.IsNullOrWhiteSpace(mediaKey))
                     {

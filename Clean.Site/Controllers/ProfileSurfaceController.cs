@@ -124,9 +124,10 @@ namespace Clean.Site.Controllers
             }
         }
 
+        [HttpPost]
         public async Task<IActionResult> EditProfile(EditProfileViewModel model)
         {
-            if (!ModelState.IsValid) return RedirectToCurrentUmbracoPage();
+            // if (!ModelState.IsValid) return RedirectToCurrentUmbracoPage();
 
             var user = await _memberManager.GetCurrentMemberAsync();
 
