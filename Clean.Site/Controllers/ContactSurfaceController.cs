@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Portfolio.Core.Models.ViewModels;
+using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Configuration.Models;
@@ -51,20 +53,32 @@ namespace Clean.Site.Controllers
 
             return RedirectToCurrentUmbracoPage();
         }
-
-        public async Task<bool> SendEmail(ContactViewModel model)
+        public async Task<Boolean> SendEmail(ContactViewModel model)
         {
-            try
-            {
-                var fromAddress = _globalSettings.Smtp.From;
+        try
+        {
+            string senderEmail = "vladazero1@gmail.com";
+            string senderPassword = "dnyhzhzfuojooaak";
+            string smtpServer = "smtp.gmail.com";
+            int smtpPort = 587;
 
-                var subject = string.Format("Enquiry from: {0} - {1}", model.Name, model.Email);
-                EmailMessage message = new EmailMessage(fromAddress, fromAddress, subject, model.Message, false);
-                await _emailSender.SendAsync(message, emailType: "Contact");
+            MailMessage mail = new MailMessage();
+            SmtpClient smtpClient = new SmtpClient(smtpServer, smtpPort);
 
-                _logger.LogInformation("Contact Form Submitted Successfully");
+            mail.From = new MailAddress(senderEmail);
+            mail.To.Add(model.Email);
+            mail.Subject = model.Subject;
+            mail.Body = model.Message;
+            mail.IsBodyHtml = true;
+
+            smtpClient.Credentials = new NetworkCredential(senderEmail, senderPassword);
+            smtpClient.EnableSsl = true;
+
+            smtpClient.Send(mail);
+
+              _logger.LogInformation("Contact Form Submitted Successfully");
                 return true;
-            }
+        }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex, "Error When Submitting Contact Form");
