@@ -1,0 +1,108 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.SchedulePage>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Security
+
+@{
+    Layout = "Master.cshtml";
+    <link href="/css/scheduleStyles.css" rel="stylesheet" />
+}
+
+<div class="container">
+    <div class="w-95 w-md-75 w-lg-60 w-xl-55 mx-auto mb-6 text-center">
+        <div class="subtitle alt-font">
+            <span class="title ">Schedule</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="schedule-table">
+                <table class="table bg-white">
+                    <thead>
+                        @if (Model.Routine != null)
+                        {
+                            <tr>
+                                <th>Routine</th>
+                                @foreach (var item in Model.Routine)
+                                {
+                                    <th>@item</th>
+                                }
+                            </tr>
+                        }
+                    </thead>
+                    <tbody>
+                        @if (Model.Days != null)
+                        {
+                            @foreach (var item in Model.Days)
+                            {
+                                <tr>
+                                    <td class="day">@item</td>
+                                    @if (item == "Monday" || item == "Wednesday" || item == "Friday")
+                                    {
+                                        @foreach (var item2 in Model.Routine)
+                                        {
+                                            @if (item2 == "10 am" || item2 == "03 pm")
+                                            {
+                                                <td class="active">
+                                                    <h4>Originals Garaza</h4>
+                                                    <p>10 am - 11 am</p>
+                                                    <div class="hover">
+                                                        <h4>Originals Garaza</h4>
+                                                        <p>10 am - 11 am</p>
+                                                        <span>Vladimir Sec</span>
+                                                    </div>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                        }
+                                    }
+
+                                    @if (item == "Tuesday" || item == "Thursday" || item == "Saturday")
+                                    {
+                                        @foreach (var item3 in Model.Routine)
+                                        {
+                                            @if (String.Equals(item3, "03 pm"))
+                                            {
+                                                {
+                                                    int asfd = 5;
+                                                }
+                                                <td class="active">
+                                                    <h4>Originals Garaza</h4>
+                                                    <p>03 am - 05 am</p>
+                                                    <div class="hover">
+                                                        <h4>Originals Garaza</h4>
+                                                        <p>03 am - 05 am</p>
+                                                        <span>Vladimir Sec</span>
+                                                    </div>
+                                                </td>
+                                            }
+                                            @if (String.Equals(item3, "05 pm"))
+                                            {
+                                                <td class="active">
+                                                    <h4>Powerlifting</h4>
+                                                    <p>05 am - 07 am</p>
+                                                    <div class="hover">
+                                                        <h4>Powerlifting</h4>
+                                                        <p>05 am - 07 am</p>
+                                                        <span>Vladimir Sec</span>
+                                                    </div>
+                                                </td>
+                                            }
+                                            @if (!String.Equals(item3, "05 pm") && !String.Equals(item3, "03 pm"))
+                                            {
+                                                <td></td>
+                                            }
+                                        }
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

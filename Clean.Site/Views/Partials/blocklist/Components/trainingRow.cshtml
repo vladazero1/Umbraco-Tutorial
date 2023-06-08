@@ -1,0 +1,54 @@
+@inherits UmbracoViewPage<BlockListItem>
+
+@{
+    var row = (TrainingRow)Model.Content;
+    var settings = (TrainingRowSettings)Model.Settings; 
+    @if(settings?.Hide ?? false) {return; }
+    if(row.Training == null || !row.Training.Any()) return; 
+}
+
+<div class="row gx-4 gx-lg-5  justify-content-center" >
+    <header class="text-center">
+        <h2>@row.Title</h2>
+    </header> 
+
+@foreach (var Item in row.Training)
+{
+var rowItem = (TrainingModule)Item.Content;
+<div class="card mb-3" style="max-width: 540px;">
+    <h3>@rowItem.Title</h3>
+    @if(rowItem.TrainingItems != null)
+    {
+        @foreach (var item2 in rowItem.TrainingItems)
+        {
+        var rowItem2 = (ExerciseItem)item2.Content; 
+         <div class="row g-0">
+                <div class="col-md-6">
+                    @if(rowItem2.Link != null)
+                        {
+                            <iframe width="auto" 
+                            height="auto" 
+                            class="img-fluid rounded-start"
+                            src="@rowItem2.Link.Url" 
+                            frameborder="0" 
+                            allowfullscreen></iframe>
+                        }
+                </div>
+                <div class="col-md-6">
+                    <div class="card-body">
+                    @if(!string.IsNullOrWhiteSpace(rowItem2.Title))
+                    {
+                        <h5 class="card-title">@rowItem2.Title</h5>
+                    }
+                    @if(!string.IsNullOrWhiteSpace(rowItem2.Description))
+                    {
+                        <p class="card-text">@rowItem2.Description</p>
+                    }
+                    </div>
+                </div>
+        </div>   
+    }     
+    }    
+</div>
+}
+</div> 
