@@ -1,4 +1,6 @@
-﻿using Clean.Site.umbraco.models.ViewModels;
+﻿using System.Net;
+using System.Net.Mail;
+using Clean.Site.umbraco.models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -75,26 +77,63 @@ namespace Clean.Site.Controllers
                     ? CurrentPage.Value<string>("memberType")
                     : Constants.Security.DefaultMemberTypeAlias;
 
-                var identityUser = MemberIdentityUser.CreateNew(model.Email, model.Email, memberTypeAlias, isApproved: true, fullName);
+                var identityUser = MemberIdentityUser.CreateNew(model.Email, model.Email, memberTypeAlias, isApproved: false, fullName);
                 IdentityResult identityResult = await _memberManager.CreateAsync(
                     identityUser,
                     model.Password);
 
                 var member = _memberService.GetByEmail(identityUser.Email);
+                var token = member.Key;
+
 
                 _logger.LogInformation("Register: Member created successfully");
 
+                member.SetValue("token", token);
                 member.SetValue("firstName", model.FirstName);
                 member.SetValue("lastName", model.LastName);
-                member.IsApproved = true;
+                member.IsApproved = false;
 
                 _memberService.Save(member);
 
                 _memberService.AssignRoles(new[] { member.Username }, new[] {"Member"});
+                TempData["Success"] = await SendEmailWithValidateToken(model,token);
             }
 
-            TempData["Success"] = true;
             return RedirectToCurrentUmbracoPage();
+        }
+
+        public async Task<bool> SendEmailWithValidateToken(RegisterViewModel model,Guid token)
+        {
+            try
+            {
+                string senderEmail = "vladazero1@gmail.com";
+                string senderPassword = "dnyhzhzfuojooaak";
+                string smtpServer = "smtp.gmail.com";
+                int smtpPort = 587;
+
+                MailMessage mail = new MailMessage();
+                SmtpClient smtpClient = new SmtpClient(smtpServer, smtpPort);
+
+
+
+                mail.From = new MailAddress(senderEmail);
+                mail.To.Add(model.Email);
+                mail.Body = "https://localhost:44374/RegisterSurface/validate/" + token;
+                mail.IsBodyHtml = true;
+
+                smtpClient.Credentials = new NetworkCredential(senderEmail, senderPassword);
+                smtpClient.EnableSsl = true;
+
+                smtpClient.Send(mail);
+
+                _logger.LogInformation("Submitted Successfully");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error When Trying To Send  Registered Email");
+                return false;
+            }
         }
 
         public async Task<bool> SendAlreadyRegisteredEmail(RegisterViewModel model)
@@ -118,6 +157,16 @@ namespace Clean.Site.Controllers
                 _logger.LogError(ex, "Error When Trying To Send Already Registered Email");
                 return false;
             }
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Validate(Guid token)
+        {
+            var member = _memberService.GetByKey(token);
+            member.IsApproved = true;
+            _memberService.Save(member);
+            return RedirectToUmbracoPage(Guid.Parse("5dfe2eac-6e20-482f-9441-b973cd64fdf1"));
         }
     }
 }

@@ -79,11 +79,11 @@ namespace Clean.Site.Controllers
               _logger.LogInformation("Contact Form Submitted Successfully");
                 return true;
         }
-            catch (System.Exception ex)
-            {
-                _logger.LogError(ex, "Error When Submitting Contact Form");
-                return false;
-            }
+        catch (System.Exception ex)
+        {
+            _logger.LogError(ex, "Error When Submitting Contact Form");
+            return false;
+        }
         }
     }
 }

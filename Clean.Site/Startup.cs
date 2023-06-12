@@ -60,6 +60,10 @@ namespace Clean.Site
                     u.UseBackOfficeEndpoints();
                     u.UseWebsiteEndpoints();
                 });
+            app.UseEndpoints(endpoints => endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=StartPage}/{action=Index}/{token?}"));
+                    
         }
     }
 }
