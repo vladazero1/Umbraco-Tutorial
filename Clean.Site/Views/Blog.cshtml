@@ -1,0 +1,60 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Blog>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@{
+	Layout = "Master.cshtml";
+	<link href="/css/main.css" rel="stylesheet" />
+}
+<div class="container">
+    <!-- Featured blogpost -->
+    <div class="row section">
+        <div class="col-md-12">
+            @{
+                IPublishedContent featureStory = Model.Value<IPublishedContent>("featuredStory");
+                if(featureStory != null)
+                {
+                    <a href="@featureStory.Url()" class="featured-link">
+                        <div class="featured-blog">
+                            @{
+                                var featureImage = featureStory.Value<IPublishedContent>("thumbnailImage");
+                            }
+                            <div class="image-box" style="background-image:url('@featureImage.Url()')"></div>
+                            <h2>@featureStory.Value("blogTitle")</h2>
+                            <p>@featureStory.Value("introText")</p>
+                            <a href="@featureStory.Url()" class="btn btn-primary">Read More &gt;&gt;</a>
+                        </div>
+                    </a>
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Latest blog posts -->
+    <div class="row section">
+        <div class="col-md-12">
+            <h3>Latest stories</h3>
+        </div>
+    </div>
+
+    <!-- Blog Post Query goes here. -->
+    @{
+    	var selection = Umbraco.Content(Guid.Parse("d4c8701b-f132-48d5-9e29-f66374bc2987"))
+        .ChildrenOfType("blogItem")
+        .Where(x => x.IsVisible())
+        .OrderByDescending(x => x.CreateDate);
+    }
+     <div class="row">
+    	@foreach (var item in selection)
+    	{
+    	var thumbnail = item.Value<IPublishedContent>("thumbnailImage");
+    		<div class="col-md-4">
+                <a href="@item.Url()" class="featured-link">
+                    <div class="thumbnail-blog">
+                        <div class="thumbnail-img" style="background-image:url('@thumbnail.Url()')"></div>
+                        <h5>@item.Value("blogTitle")</h5>
+                    </div>
+                </a>
+            </div>
+    	}
+    </div>
+</div>

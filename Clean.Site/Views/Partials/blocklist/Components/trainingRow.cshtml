@@ -3,9 +3,12 @@
 @{
     var row = (TrainingRow)Model.Content;
     var settings = (TrainingRowSettings)Model.Settings; 
-    @if(settings?.Hide ?? false) {return; }
+    @if((settings?.Hide  ?? false) || !User.Identity.IsAuthenticated) {return; }
     if(row.Training == null || !row.Training.Any()) return; 
+ 
 }
+
+
 
 <div class="row gx-4 gx-lg-5  justify-content-center" >
     <header class="text-center">
@@ -52,3 +55,4 @@ var rowItem = (TrainingModule)Item.Content;
 </div>
 }
 </div> 
+
